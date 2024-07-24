@@ -39,17 +39,19 @@
 
 <main>
   <h1>Überfällige Zahlungen</h1>
-  <div>
-    <label>
-      Benutzername:
-      <input type="text" bind:value={username} />
-    </label>
-    <label>
-      Passwort:
-      <input type="password" bind:value={password} />
-    </label>
-    <center><button on:click={fetchData}>Daten laden</button></center>
-  </div>
+  {#if rows.length <= 0}
+    <form on:submit|preventDefault={fetchData}>
+      <label>
+        Benutzername:
+        <input type="text" bind:value={username} />
+      </label>
+      <label>
+        Passwort:
+        <input type="password" bind:value={password} />
+      </label>
+      <center><button type="submit">Daten laden</button></center>
+    </form>
+  {/if}
   
   {#if error}
     <p style="color: red;">{error}</p>
@@ -68,6 +70,13 @@
           </p>
           <p>
             {#each row.data as column}
+              {#if column.columnId === 23}
+                Username: {column.value}
+              {/if}
+            {/each}
+          </p>          
+          <p>
+            {#each row.data as column}
               {#if column.columnId === 27}
                 Letzte Zahlung: {column.value}
               {/if}
@@ -80,14 +89,7 @@
 </main>
 
 <style>
-  main {
-    font-family: Arial, sans-serif;
-    padding: 1rem;
-  }
-  h1 {
-    color: #333;
-  }
-  div {
+  form {
     margin-bottom: 1rem;
   }
   label {
@@ -112,7 +114,7 @@
     margin-bottom: 1rem;
     padding: 1rem;
     border: 1px solid #ddd;
-    border-radius: 5px;
+    border-radius: 16px;
   }
   p {
     margin: 0.5rem 0;
