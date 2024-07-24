@@ -1,2 +1,0 @@
-# Überflüssige Mitgliedsbeiträge checken
-Dieses Projekt ist eine einfache Webanwendung, die überfällige Zahlungen in einer Liste anzeigt. Die Daten werden von der Nextcloud Table API abgerufen, wobei die Authentifizierung über Basic Auth erfolgt.
