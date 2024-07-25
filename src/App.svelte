@@ -1,13 +1,25 @@
 <script>
-  let username = "";
-  let password = "";
+  import Form from './lib/Form.svelte';
+  import Loading from './lib/Loading.svelte';
+  import Error from './lib/Error.svelte';
+  import RowList from './lib/RowList.svelte';
+
+  let username = localStorage.getItem('username') || "";
+  let password = localStorage.getItem('password') || "";
   let rows = [];
   let error = "";
+  let loading = false;
 
   async function fetchData() {
+    localStorage.setItem('username', username);
+    localStorage.setItem('password', password);
+    
     const authString = `${username}:${password}`;
     const encodedAuthString = btoa(authString);
 
+    loading = true;
+    error = "";
+    rows = [];
     try {
       const response = await fetch("https://cloud.norden.social/apps/tables/api/1/tables/4/rows", {
         headers: {
@@ -18,7 +30,6 @@
         throw new Error(`Error: ${response.statusText}`);
       }
       const data = await response.json();
-      // Filter rows to only include those with a date in columnId 27 that is older than one year
       const oneYearAgo = new Date();
       oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
       
@@ -30,9 +41,10 @@
         }
         return false;
       });
-      error = "";
     } catch (err) {
       error = err.message;
+    } finally {
+      loading = false;
     }
   }
 </script>
@@ -40,83 +52,30 @@
 <main>
   <h1>Überfällige Zahlungen</h1>
   {#if rows.length <= 0}
-    <form on:submit|preventDefault={fetchData}>
-      <label>
-        Benutzername:
-        <input type="text" bind:value={username} />
-      </label>
-      <label>
-        Passwort:
-        <input type="password" bind:value={password} />
-      </label>
-      <center><button type="submit">Daten laden</button></center>
-    </form>
+    <Form {username} {password} {fetchData} />
+    {#if loading}
+      <Loading />
+    {/if}
   {/if}
   
   {#if error}
-    <p style="color: red;">{error}</p>
+    <Error {error} />
   {/if}
 
   {#if rows.length > 0}
-    <ul>
-      {#each rows as row}
-        <li>
-          <p>
-            {#each row.data as column}
-              {#if column.columnId === 20}
-                {column.value}
-              {/if}
-            {/each}
-          </p>
-          <p>
-            {#each row.data as column}
-              {#if column.columnId === 23}
-                Username: {column.value}
-              {/if}
-            {/each}
-          </p>          
-          <p>
-            {#each row.data as column}
-              {#if column.columnId === 27}
-                Letzte Zahlung: {column.value}
-              {/if}
-            {/each}
-          </p>
-        </li>
-      {/each}
-    </ul>
+    <RowList {rows} />
   {/if}
 </main>
 
 <style>
-  form {
-    margin-bottom: 1rem;
-  }
-  label {
-    display: block;
-    margin-bottom: 0.5rem;
-  }
-  input {
-    margin-left: 1rem;
-    margin-bottom: 0.5rem;
-  }
-  button {
-    display: block;
-    margin-top: 1rem;
-    padding: 0.5rem 1rem;
-    font-size: 1rem;
-  }
-  ul {
-    list-style-type: none;
-    padding: 0;
-  }
-  li {
-    margin-bottom: 1rem;
+  main {
+    max-width: 800px;
+    margin: auto;
     padding: 1rem;
-    border: 1px solid #ddd;
-    border-radius: 16px;
+    font-family: Arial, sans-serif;
   }
-  p {
-    margin: 0.5rem 0;
+  h1 {
+    text-align: center;
+    margin-bottom: 2rem;
   }
 </style>
