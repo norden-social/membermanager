@@ -11,9 +11,10 @@
     "deploy": "npm run build && gh-pages -d dist"
   },
   "devDependencies": {
+    "@sveltejs/adapter-static": "^3.0.2",
     "@sveltejs/vite-plugin-svelte": "^3.1.1",
+    "gh-pages": "^6.1.1",
     "svelte": "^4.2.18",
-    "vite": "^5.3.4",
-    "gh-pages": "^6.1.1"
+    "vite": "^5.3.4"
   }
 }
