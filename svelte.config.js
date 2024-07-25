@@ -13,7 +13,7 @@ export default {
       fallback: null,
     }),
     paths: {
-      base: process.env.NODE_ENV === 'production' ? './' : '',
+      base: process.env.NODE_ENV === 'production' ? './' : './',
     },
   },
 }
