@@ -8,7 +8,7 @@
     "dev": "vite --host",
     "build": "vite build",
     "preview": "vite preview --host",
-    "deploy": "npm run build && gh-pages -d dist"
+    "deploy": "npx gh-pages -d dist"
   },
   "devDependencies": {
     "@sveltejs/adapter-static": "^3.0.2",

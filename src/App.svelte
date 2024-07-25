@@ -52,7 +52,7 @@
 <main>
   <h1>Überfällige Zahlungen</h1>
   {#if rows.length <= 0}
-    <Form {username} {password} {fetchData} />
+    <Form bind:username bind:password {fetchData} />
     {#if loading}
       <Loading />
     {/if}

@@ -3,6 +3,9 @@
     export let password;
     export let fetchData;
   
+    /**
+     * @param {{ preventDefault: () => void; }} event
+     */
     function handleSubmit(event) {
       event.preventDefault();
       fetchData();
