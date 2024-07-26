@@ -10,12 +10,24 @@
   let error = "";
   let loading = false;
 
-  async function fetchData() {
+  function saveCredentials() {
     localStorage.setItem('username', username);
     localStorage.setItem('password', password);
-    
-    const authString = `${username}:${password}`;
-    const encodedAuthString = btoa(authString);
+  }
+
+  function encodeAuth(username, password) {
+    return btoa(`${username}:${password}`);
+  }
+
+  function isPaymentOverdue(paymentDate) {
+    const oneYearAgo = new Date();
+    oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+    return paymentDate < oneYearAgo;
+  }
+
+  async function fetchData() {
+    saveCredentials();
+    const encodedAuthString = encodeAuth(username, password);
 
     loading = true;
     error = "";
@@ -30,14 +42,11 @@
         throw new Error(`Error: ${response.statusText}`);
       }
       const data = await response.json();
-      const oneYearAgo = new Date();
-      oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-      
       rows = data.filter(row => {
         const dateColumn = row.data.find(column => column.columnId === 27);
         if (dateColumn && dateColumn.value) {
           const paymentDate = new Date(dateColumn.value);
-          return paymentDate < oneYearAgo;
+          return isPaymentOverdue(paymentDate);
         }
         return false;
       });
@@ -51,7 +60,7 @@
 
 <main>
   <h1>Überfällige Zahlungen</h1>
-  {#if rows.length <= 0}
+  {#if rows.length === 0}
     <Form bind:username bind:password {fetchData} />
     {#if loading}
       <Loading />

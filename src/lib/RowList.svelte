@@ -1,59 +1,57 @@
 <script>
-    export let rows;
-  
-    function parseLink(columnValue) {
-      try {
-        return JSON.parse(columnValue).value;
-      } catch (e) {
-        return null;
-      }
+  export let rows;
+
+  function parseLink(columnValue) {
+    try {
+      return JSON.parse(columnValue).value;
+    } catch {
+      return null;
     }
-  </script>
+  }
+
+  function getColumnValue(row, columnId) {
+    const column = row.data.find(col => col.columnId === columnId);
+    return column ? column.value : null;
+  }
+</script>
+
+<ul>
+  {#each rows as row}
+    <li>
+      <h2><strong>{getColumnValue(row, 20)}</strong></h2>
+      <p>
+        <a href="mailto:{getColumnValue(row, 22)}" target="_blank">{getColumnValue(row, 22)}</a>
+      </p>
+      <p>
+        {#if getColumnValue(row, 23)}
+          <a href="{parseLink(getColumnValue(row, 23))}" target="_blank">{parseLink(getColumnValue(row, 23))}</a>
+        {/if}
+      </p>
+      <p>
+        <i>Letzte Zahlung: {new Date(getColumnValue(row, 27)).toLocaleDateString()}</i>
+      </p>
+    </li>
+  {/each}
+</ul>
+
+<style>
+  h2 {
+    margin: 0;
+    padding: 0;
+  }
   
-  <ul>
-    {#each rows as row}
-      <li>
-        <p>
-          {#each row.data as column}
-            {#if column.columnId === 20}
-              {column.value}
-            {/if}
-          {/each}
-        </p>
-        <p>
-          {#each row.data as column}
-            {#if column.columnId === 23}
-              {#if column.value}
-                <a href="{parseLink(column.value)}" target="_blank">{parseLink(column.value)}</a>
-              {/if}
-            {/if}
-          {/each}
-        </p>
-        <p>
-          {#each row.data as column}
-            {#if column.columnId === 27}
-              Letzte Zahlung: {new Date(column.value).toLocaleDateString()}
-            {/if}
-          {/each}
-        </p>
-      </li>
-    {/each}
-  </ul>
-  
-  <style>
-    ul {
-      list-style-type: none;
-      padding: 0;
-    }
-    li {
-      margin-bottom: 1rem;
-      padding: 1rem;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      background: #f9f9f9;
-    }
-    li p {
-      margin: 0.5rem 0;
-    }
-  </style>
-  
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  li {
+    margin-bottom: 1rem;
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #f9f9f9;
+  }
+  li p {
+    margin: 0.5rem 0;
+  }
+</style>
